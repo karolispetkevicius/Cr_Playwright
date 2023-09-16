@@ -2,6 +2,23 @@ from playwright.sync_api import sync_playwright
 import json
 from playwright_stealth import stealth_sync
 import time
+import random
+
+
+
+
+proxies = [
+    'http://qflaraby:opz4w46ujvjw@185.199.229.156:7492',
+    'http://qflaraby:opz4w46ujvjw@185.199.228.220:7300',
+    'http://qflaraby:opz4w46ujvjw@185.185.199.231.45:8382',
+    'http://qflaraby:opz4w46ujvjw@188.74.210.207:6286',
+    'http://qflaraby:opz4w46ujvjw@185.188.74.183.10:8279',
+    'http://qflaraby:opz4w46ujvjw@185.188.74.210.21:6100',
+    'http://qflaraby:opz4w46ujvjw@45.155.68.129:8133',
+    'http://qflaraby:opz4w46ujvjw@154.95.36.199:6893',
+    'http://qflaraby:opz4w46ujvjw@45.94.47.66:8110',
+]
+
 
 search_input = "305485432"
 login_url = "https://www.cr.lt/"
@@ -9,11 +26,14 @@ search_url = "https://www.cr.lt/imones/n/noriu/search/"
 
 
 account_pool = [
-    {"username": "asas10", "password": "6NmfHtW"},
-    {"username": "laura121", "password": "Fmqj4Ma"},
-    {"username": "popo00", "password": "3t52HCC"},
-
+    {"username": "karolispetkevicius", "password": "y5rAUZ2"}
 ]
+
+def rotate_proxy():
+    return random.choice(proxies)
+
+
+
 
 def detect_captcha(page):
     captcha_element = page.query_selector('div.errors')
@@ -29,8 +49,11 @@ def detect_captcha(page):
 
 
 with sync_playwright() as p:
+
     for account in account_pool:
-        browser = p.chromium.launch(headless=False, slow_mo=50)
+        
+        selected_proxy = rotate_proxy()
+        browser = p.chromium.launch(headless=False, slow_mo=50,  args=[f'--proxy-server={selected_proxy}'])
         context = browser.new_context(user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36')
         stealth_sync(context)
         page = context.new_page()
